@@ -227,3 +227,143 @@ function baseConverter(decNumber, base) {
 ### 小结
 
 这一章主要讲了,栈的基础概念,然后分别讲了使用数组和对象来实现栈这种数据类型的各自的优缺点, 补充了如何实现类中私有属性,最后讲了一个栈的应用
+
+
+
+## 队列与双端队列
+
+### 队列
+
+首先了解一下什么是队列, 队列是遵顼**先进先出**原则的一组有序的项
+
+然后我们来定义一个都队列,这里我们为了更高效的获取数据,还是使用对象这种数据类型来帮助我们创建类
+
+```js
+class Queue {
+    constructor() {
+        this.count = 0
+        this.lowstCount = 0
+        this.items = {}
+    }
+    enqueue(el) {
+        this.items[this.count] = el
+        this.count++
+    }
+    dequeue() {
+        if (this.isEmpty()) return undefined;
+        const result = this.item[this.count]
+       	delete this.items[this.lowstCount]
+        this.lowstCount++
+    }
+    isEmpty() {
+        return this.count - this.lowstCount === 0
+    }
+    peek() {
+        if(this.isEmpty()) return undefined;
+    }
+    clear() {
+        this.items = {}
+        this.count = 0
+        this.lowsCount = 0
+    }
+    toString() {
+        if(this.isEmpty()) {
+            return ''
+        }
+        let result = ''
+        for(let i = this.lowstCount; i++; i < this.count) {
+            result += this.items[i]
+        }
+        return result
+    }
+}
+```
+
+解释一下,这里的lowsCount表示的是当前队列中的第一项值的索引, 而这里的count还是表示下一项添加进来的索引
+
+
+
+### 双端队列
+
+**双端队列**是一种允许我们同时从前端和后端添加和移除元素的特殊队列
+
+举一个栗子,类似与生活中排队买票,一个刚买了票的人如果需要再问些问题可以直接去队伍的头部,如果一个人不想等了也可以直接走开
+
+由于是一种特殊的队列,那么就有相同的几个方法: isEmpty clear size 和 toString, 由于允许在两端添加删除元素,于是就有其他的一些特殊的方法,比如:
+
++ addFront(el): 在前端添加新元素
++ addBack(el): 在后端添加元素
++ removeFront(): 移除前端
++ removeBack(): 移除后端
++ peekFront(): 返回第一个元素
++ peekbakc(): 返回最后一个元素
+
+```js
+class Deque {
+    constructor() {
+        this.items = {}
+        this.count = 0
+        this.lowstCount = 0
+    }
+    addFront(el) {
+        if(this.isEmpty()) {
+            this.addBack(el)
+        } else if(this.lowstCount > 0) {
+            this.lowstCount--
+            this.items[this.lowstCount] = el
+        } else {
+            for(let i = this.count; i > 0; i--) {
+                this.items[i] = this.itmes[i-1]
+            }
+            this.count++
+            this.items[0] = el
+        }
+    }
+}
+```
+
+这里主要讲一下这个addFront这个方法,主要会出现三种情况
+
+第一种场景队列为空的情况下,直接使用从后端添加的方法
+
+第二种场景当队列的第一个元素的索引不为0的时候我们直接添加一位
+
+第三种场景当队列的第一个元素的索引为0的时候,我们遍历讲所有元素都向后移动一位,然后将这个元素直接添加到第一位
+
+
+
+### 实际应用
+
+#### 循环队列--击鼓传花游戏
+
+```js
+// num 表示花传多少次会淘汰一个人
+function hotPotato(elementsList, num) {
+    const queue = new Queue()
+    const elimitatedList = []
+    for (i = 0; i < elementsList.length; i++) {
+        queue.enqueye(elementslist[i])
+    }
+    while(queue.size() > 1) {
+        for (let i = 0; i < num; i++) {
+            queue.enqueue(queue.dequeue())
+        }
+        elimitatedList.push(queue.dequeue())
+    }
+    return {
+        eliminated: elemitatedList,
+        winner: queue.dequeue()
+    }
+}
+```
+
+
+
+### 小结
+
+本章介绍了队列这种先进先出的数据结构, 同时扩展了一个双端队列,你可以把它理解为栈和队列的合集
+
+
+
+
+
