@@ -182,8 +182,48 @@ class Stack {
 
 ```js
 function decimalToBinary(decNumber) {
-    
-    
+    const stack = new Stack()
+    let number = decNumber
+    let rem;
+    let result = ''
+    while(number > 0) {
+        rem = Math.floor(number % 2)
+        stack.push(rem)
+        number = Math.floor(number / 2)
+    }
+    while(!stack.isEmpty()) {
+        result += stack.pop().toString()
+    }
+    return result
 }
 ```
 
+稍微修改一下变成十进制转换成 基数为2~36的任意进制
+
+```js
+function baseConverter(decNumber, base) {
+  const stack = new Stack()
+  const disits = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let number = decNumber
+  let rem
+  let result = ''
+  if (!(base >=2 && base <= 36)) {
+  	return ''
+  }
+  while(number > 0) {
+  	rem = Math.floor(number % base)
+  	stack.push(rem)
+  	number = Math.floor(number / base)
+  }
+  while(!stack.isEmpty()) {
+  	result += disits[remStack.pop()]
+  }
+  return result
+}
+```
+
+
+
+### 小结
+
+这一章主要讲了,栈的基础概念,然后分别讲了使用数组和对象来实现栈这种数据类型的各自的优缺点, 补充了如何实现类中私有属性,最后讲了一个栈的应用
