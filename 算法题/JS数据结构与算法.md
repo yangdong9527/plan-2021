@@ -369,3 +369,59 @@ function hotPotato(elementsList, num) {
 
 链表一种动态的数据结构,我们可以随意的添加或移除项,它会按需进行扩容
 
+### 链表数据结构
+
+**链表**存储有序的元素集合, 链表中的元素在内存中并不是连续放置的, 每个元素中由一个存储元素本身的节点和一个指向下一个元素的引用组成
+
+相比较与传统的数组, 链表的好处在于,添加或移除元素的时候不需要移动其他元素, 需要注意的是在链表中想访问任何元素,都要从起点开始迭代找到直到所需的元素
+
+
+
+#### 创建链表
+
+参数说明, count是链表的长度,head是第一个元素,equalsFn使用来比较元素是否相等
+
+要实现链表类 还要实现他的一些方法
+
++ push(el): 向链表尾部添加一个新元素
++ insert(el, position): 向链表的特定位置插入一个新元素
++ getElementAt(index): 返回链表中特定位置的元素
++ remove(eement): 从链表中移除一个元素
++ indexOf(element): 返回元素在链表中的索引
++ removeAt(position): 从链表的特定位置移除一个元素
++ isEmpty(): 是否为空
+
+```js
+import { defaultEquals } from '../util'
+export default class LinkedList {
+    constructor(equalsFn = defaultEquals) {
+        this.count = 0
+        this.head = undefined
+        this.equalsFn = equalsFn
+    }
+    push(element) {
+        const node = new Node(element)
+        let current;
+        if (this.head == null) {
+            this.head = node
+        } else {
+            current = this.head
+            while (current.next != null) {
+                current = current.next
+            }
+            current.next = node
+        }
+		this.count++
+    }
+    removeAt(index) {
+        
+    }
+}
+export class Node {
+    constructor(element) {
+        this.element = element
+        this.next = undefined
+    }
+}
+```
+
