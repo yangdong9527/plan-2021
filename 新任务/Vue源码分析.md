@@ -20,6 +20,8 @@
 
 `/core/instance/lifecycle.js`文件中`mountComponent()`方法
 
+`mountCompent`的主要作用就是 一个调用render函数生成VNode, 第二个初始化一个渲染`Watcher`,初始化渲染
+
 `mountComponent`核心就是先调用`vm._render`方法 先生成虚拟Node,然后再实例化一个渲染`Watcher`,在它的回调中调用`updateComponent`方法,最终调用`vm._update`更新DOM
 
 `Watcher`在这里两个作用,一个是初始化的时候会执行回调函数, 另一个是当vm实例中监测的数据发生变化的时候执行回调函数
