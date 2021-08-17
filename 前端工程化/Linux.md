@@ -28,3 +28,18 @@ nvm uninstall v14.0.0
 
 ```
 
+**安装完成后报错**
+
+```shell
+# command not found
+cd ~/.nvm
+vim .bash_profile
+# 输入以下内容保存
+
+export NVM_DIR="/root/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# 执行环境变量
+source .bash_profile
+```
+

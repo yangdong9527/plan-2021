@@ -71,3 +71,7 @@ service jenkins start
 
 
 
+## 插件的使用
+
+### publish over ssh 使用
+
