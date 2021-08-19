@@ -98,7 +98,11 @@ new Vue后整个初始化渲染过程 : 初始化 => $mount(挂载) => compile(�
 
 
 
-## 淘宝开放平台
+## 组件
+
+主要是讲的是渲染组件和渲染普通的标签的不同之处
+
+ 首先`createComponent`函数, 创建了一个
 
 ### createComponent
 
@@ -118,7 +122,7 @@ new Vue后整个初始化渲染过程 : 初始化 => $mount(挂载) => compile(�
 
   定义了一些组件的钩子函数,然后合并到`data.hook`中, 当`VNode`执行`patch`的过程中就会执行这个钩子函数
 
-+ 实例化VNode
++ 生成VNode
 
   直接`new VNode`实例化一个`vnode`并返回, 和普通的元素节点的`vnode`不同,组件的`vnode`没有`children`
 

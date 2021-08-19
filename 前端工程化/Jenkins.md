@@ -40,9 +40,13 @@ vim /var/jenkins_home/hudson.model.updateCenter.xml
 
 **配置项目的webHook**
 
-配置项目的webHook : GitHub项目 => setting => Webhooks => add => 填入jenkins地址 => 勾选push或自定义
+先去进入github项目 => setting => Webhooks => Add
 
-这一步的目的比如 当 github 接收到 push 等操作时, 会触发一个 hook, 然后 根据地址回调Jenkins, 然后Jenkins完成自动构建
+填入 Jenkins 服务器IP 点击生成
+
+然后进入 Jenkins 系统管理 => GitHub => Add GitHub Server 填入 API URL : https://api.github.com
+
+
 
 **配置ssh**
 
@@ -71,7 +75,5 @@ service jenkins start
 
 
 
-## 插件的使用
 
-### publish over ssh 使用
 
