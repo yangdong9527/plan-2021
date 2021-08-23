@@ -1,4 +1,4 @@
-# Webpack4
+# 基础
 
 总结一下把, 总是忘记
 
@@ -17,7 +17,6 @@ npm install webpack webpack-cli -D
 
 + **url-loader**
 + file-loader
-+ 
 
 
 
@@ -196,3 +195,253 @@ module.exports = {
 其他相关连接
 
 [指南 > 模块热替换](https://webpack.docschina.org/concepts/hot-module-replacement/) HMR 原理
+
+
+
+## Babel
+
+###  业务代码Babel
+
+`Babel`的作用是用来解决 低版本的浏览器, 无法识别ES6之类的新语法, 进行转换和补充新语法的作用
+
+```shell
+# 安装loader 和 babel 核心库
+npm i --save-dev babel-loader @babel/core
+# 安装 @babel/preset-env 模块 包含了所有的es6转es5 的方法
+npm install @babel/preset-env --save-dev
+```
+
+相关配置
+
+```js
+module.exports = {
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/perset-env']
+                }
+            }
+        ]
+    }
+}
+```
+
+配置到上面这一步后, 就会帮我们把ES6的一些语法转换成ES5的写法, 比如像箭头函数这种就会被转换回来, 但是像ES6新增的一些变量和函数还是需要借助`polyfill`补充这些方法
+
+```shell
+npm i -S @babel/ployfill
+# 全局引入 在主文件开头
+@import "@babel/polyfill"
+# 这样不好 文件太大了
+```
+
+解决办法 给`@babel/perset-env`添加参数
+
+```js
+module.exports = {
+    ...
+    options: {
+        presets: [['@babel/perset-env', {
+            useBuiltIns: 'usage' // 设置了这个 不需要 @import 了
+        }]]
+    }
+}
+// 设置该属性 按需加载
+```
+
+### 打包类库时
+
+打包类库时不能使用上面的方法全局的引入, 因为这样会**造成全局的污染**
+
+```shell
+npm install -D @babel/plugin-transform-runtime
+npm install -S @babel/runtime
+# corejs: 2 
+npm install -S @babel/runtime-corejs2
+```
+
+配置`plugins`而不是配置`presets`
+
+```js
+module.exports = {
+    ...
+    options: {
+        plugins: [['@babel/plugin-transform-runtime', {
+            corejs: 2,
+            helpers: true,
+            regenerator: true,
+            useESModules: false
+        }]]
+    }
+}
+```
+
+### .babelrc文件
+
+因为`babel`的`options`太多了可以将`options`中的所有的配置卸载`.babelrc`文件中
+
+如果像打包Vue或者React这些需要用到`@babel/preset-vue`或者 `@babel/preset-react`这种转换一下
+
+就以React打包为例, `.babelrc`文件中
+
+> babel 也是 从 后往前 转换的
+
+```.babelrc
+{
+	presets: [
+		[
+			"@babel/preset-env", {
+				useBuiltIns: 'usage'
+			}
+		],
+		"@babel/preset-react"
+	]
+}
+```
+
+
+
+## 小结
+
+到这里就已经熟悉的`webapck`中的一些基本配置了, 主要还是 一些 `loader`和 `plugin`的使用 以及 `babel` 的使用
+
+总结一下这一块主要的东西有哪些
+
++ 静态文件的打包, 包括 图片 , 字体
+
+  学习`url-loader` 和 `file-loader` 的使用
+
++ 样式的打包
+
+  学习了 `style-loader` `css-loader` `sass-loader` `postcss-loader` 的使用
+
+  需要注意的是 `postcss-loader` 的配置 `autoprefixed` 自动添加厂商
+
++ 插件的使用
+
+  这里暂时说了 `HtmlWebpackPlugin` 和 `HotModuleReplacement` 两个插件的使用
+
+  常考题 `HMR` 热更新的原理
+
++ SourceMap
+
+  SourceMap 的原理
+
++ 使用开发工具
+
+  `WebpackDevServer`使用
+
++ Babel
+
+  + 打包业务代码时,Babel配置
+  + 打包类库时,Babel配置
+  + 打包Vue, React 这种框架时, Babel配置
+
+  
+
+# 升级
+
+## Tree Shaking
+
+`Tree Shaking` (摇树) 作用是 将一个模块里 没有用到的代码去除掉, 但是注意, 它 `只支持ES Module`, 因为 `ES Moudle` 的引入是一种静态的引入方式, 像`common.js`的引入方式其实是动态的引入, 而 `Tree Shaking`只支持静态引入
+
+在`development`环境下
+
+配置 `webpack.config.js` 中的 
+
+```js
+...
+optimization: {
+    usedExports: true
+}
+```
+
+然后配置 `package.json`文件中的
+
+```json
+sideEffects: ['*.css']
+```
+
+这个属性是用来配置 哪些文件不需要做 `Tree Shaking`, 比如引入 `.css` 文件 没有返回值 会被直接给去除掉, 所有需要配置
+
+在 `production` 环境下 已经做了配置不需要配置
+
+
+
+## Model 环境
+
+
+
+## 代码分割(code splitting)
+
+代码分割使用的场景, 比如 使用第三方库时, 在某个文件中引入了 第三方库, 那么这个文件就会变得特别大, 加载缓慢,  然后 当我们 修改了 业务代码 , 再次打包, 文件发生改变, 浏览器又需要重新加载一次 这个文件
+
+代码分割的方式有两种, 分别对应两种情况
+
++ **同步代码** : 直接引入的, 需要在 `config.js` 文件中 配置 `optimization`配置
+
+  ```js
+  optimization: {
+      splitChunks: {
+          chunks: 'all'
+      }
+  }
+  ```
+
++ **异步代码** : 通过 `import()`异步引入的第三方库, 无需配置, 自动会被分割到一个单独的文件中
+
+  注释 `/* webpackChunkName: "lodash" */`  可以设置分割文件的名字
+
+  ```js
+  () => import (/* webpackChunkName: 'Home' */ '@/views/Home.vue')
+  ```
+
+### SplitChunksPlugin插件
+
+默认的配置
+
+```js
+{
+    splitChunks: {
+      chunks: 'async', // 注解1
+      minSize: 20000, // 大于 20 kb 进行代码分割
+      minRemainingSize: 0,
+      minChunks: 1, // 当一个文件最少被用了几次的时候 进行代码分割
+      maxAsyncRequests: 30, // 最多分割几个类库, 比如同时引入了31个库, 它只对前30个进行代码分割
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: { // 注解2
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10, // 注解4
+          reuseExistingChunk: true,
+          filename: 'vendors.js'
+        },
+        default: { // 注释3
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true, // 如果某个模块已经被打包了就不再重新打包,直接使用之前的那个
+          filename: 'common.js'
+        },
+      },
+}
+```
+
+**注解1 : ** 参数有 `initial`, `async`, `all` 表示, 那种代码需要做代码分割, 比如 `async` 表示只有异步的代码进行代码分割, 同步的代码不进行代码分割 , `all` 表示两种都进行代码分割
+
+**注解2 : ** 当我们在打包同步的代码时, 会执行到分组地方, 这里表示, 将满足`test`的第三方的库 , 打包到一个叫`defaultVendors`名字的分组中,  `chunks` 和 `cacheGroups` 是配合着来使用的
+
+**注解3 : ** 比如当进行同步代码分割的时候, 但是不满足`defaultVendors`这个组的条件的时候, 就会分割到这个默认的分组
+
+**注解4 : ** 组的优先级, 当同时满足多个分组的条件的时候, 优先级大 , 就用 那个组
+
+
+
+
+
+
+
