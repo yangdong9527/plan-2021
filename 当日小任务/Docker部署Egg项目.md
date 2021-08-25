@@ -19,7 +19,7 @@ EXPOSE 7001
 CMD npm run prod
 ```
 
-然后在服务器允许
+然后在服务器运行
 
 ```shell
 # 创建镜像
@@ -28,3 +28,4 @@ docker run -d -p 7001:7001 --name egg egg:latest
 ```
 
 搞定
+

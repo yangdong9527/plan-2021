@@ -441,7 +441,85 @@ sideEffects: ['*.css']
 
 
 
+## 打包分析
+
+[官方工具](https://github.com/webpack/analyse)
+
+```shell
+# 在命令行添加命令 得到一个 json 文件
+scripts: {
+	"build": "webpack --profile --json > stats.json"
+}
+
+# 然后打开http://webpack.github.com/analyse  选择json文件就可以
+```
 
 
 
+[webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
+
+在`Vue`中使用
+
+```shell
+npm install --save-dev webpack-bundle-analyzer
+```
+
+`vue.config.js`
+
+```js
+chainWebpack(config) {
+    if (process.env.analyzer) {
+        config.plugin('webpack-bundle-analyzer')
+        	.use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    }
+}
+```
+
+`package.json`
+
+```json
+"scripts": {
+    "analyzer": "cross-env NODE_ENV=production analyzer=true npm run build"
+}
+```
+
+> window环境需要全局安装 `cross-env`
+
+[webpack官网打包分析](https://webpack.docschina.org/guides/code-splitting/#bundle-analysis)
+
+
+
+## Prefetch 和 Preload
+
+**相比较与利用缓存进行性能优化,提高页面加载的代码的利用率变得更高**
+
+对于一些将来要使用的代码,使用懒加载, 然后 结合`prefetch`或者`preload` 来提高使用时的加载速度
+
+```js
+import(/* WebpackPrefetch: true */ './1.js')
+```
+
+**解释 :** 使用懒加载`1.js`文件, 然后使用`prefetch`, 在界面主文件加载完成,浏览器空闲的时候,加载当前这个文件,当使用到这个文件的时候就会直接使用
+
+**Vue中的使用**
+
+在Vue中, 默认会将为所有的`asnyc chunk` 添加 `prefetch`操作
+
+在Vue中, 默认会为所有的初始化渲染需要的文件 添加 `preload`操作
+
+当移动端对流量比较敏感的就不要使用这个`prefetch`,移动端你可能使用的只有几个页面, 这时候使用
+
+```js
+// vue.config.js
+module.epxorts = {
+    chainWebpack(config) {
+        // 移除prefetch 插件
+        config.plugins.delete('prefetch')
+    }
+}
+```
+
+
+
+## CSS代码分割
 
