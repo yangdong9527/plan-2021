@@ -22,7 +22,7 @@ vue-cli-service build --mode development
 
 创建一个预发布环境, 实际操作如下:
 
-在项目根目录下创建环境文件: `.env.preproduction `
+在项目根目录下创建环境文件: `.env.production `
 
 ```
 NODE_ENV="production"
@@ -33,7 +33,7 @@ VUE_APP_URL="http://www.abc.com"
 
 ```json
 "script": {
-    "build_preproduction": "vue-cli-service build --mode preproduction"
+    "build_preproduction": "vue-cli-service build --mode production"
 }
 ```
 

@@ -366,7 +366,7 @@ optimization: {
 sideEffects: ['*.css']
 ```
 
-这个属性是用来配置 哪些文件不需要做 `Tree Shaking`, 比如引入 `.css` 文件 没有返回值 会被直接给去除掉, 所有需要配置
+这个**属性是用来配置 哪些文件不需要**做 `Tree Shaking`, 比如引入 `.css` 文件 没有返回值 会被直接给去除掉, 所有需要配置
 
 在 `production` 环境下 已经做了配置不需要配置
 
@@ -522,4 +522,80 @@ module.epxorts = {
 
 
 ## CSS代码分割
+
+### chunkFileName
+
+`output`中的`chunkFileName`除了入口主文件,其他的打包出来的文件的名称
+
+
+
+### MiniCssExtractPlugin插件
+
+`MiniCssExtractPlugin`需要配合`loader`使用, 除了引入插件,还需要配置`loader`, 配置完成就会进行代码分割
+
+
+
+#### optimize-css-assets-webpack-plugin插件
+
+对css文件进行压缩
+
+```js
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+module.exports = {
+    optmization: {
+        minimizer: [
+            new OptimizeCssAssetsPlugin({})
+        ]
+    }
+}
+```
+
+### 扩展
+
+可以使用`splitChunks`对Css文件进行分组,甚至可以将不同入口文件中的css进行区分分割开来
+
+
+
+## 浏览器缓存
+
+添加Hash值
+
+```js
+module.exports = {
+    output: {
+        fileName: '[name].[contenthash].js',
+        chunkFileName: '[name].[contenthash].js'
+    }
+}
+```
+
+只有修改了这个hash值才会发生改变,
+
+
+
+注意在老版本中可能你没有修改但是每次打包生成的hash值会不一样,那是因为, 你每次打包生成的`mainifest`可能不一样, `mainifest`记录的是每次打包各个包之间的依赖关系,可能每次打包发生了一些变化,`manifest`可能记录在各个包中间,
+
+解决办法就是将各个包`mainifest`关联关系抽离出来, 这样各个包里面也就没有了关联的关系,也就不会发生改变了
+
+```js
+module.exports = {
+    output: {
+        fileName: '[name].[contenthash].js',
+        chunkFileName: '[name].[contenthash],js'
+    },
+    optimization: {
+        runtimeChunk: {
+            name: 'runtime'
+        }
+    }
+}
+```
+
+配置了这个 不管是新版本还是老版本 都可以 当然现在都是新版本 就不会发生这种事情了
+
+
+
+## Shimming
+
+
 
