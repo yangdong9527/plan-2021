@@ -595,7 +595,8 @@ module.exports = {
 
 
 
-## Shimming
+## Shimming预置依赖
 
+### Simming预置全局变量
 
-
+[官网](https://webpack.docschina.org/guides/shimming/#shimming-globals)
