@@ -521,6 +521,12 @@ module.epxorts = {
 
 
 
+**Vue-Cli中的Prefetch**
+
+[Vue-Cli](https://cli.vuejs.org/zh/guide/html-and-static-assets.html#prefetch)
+
+Vue-CLI创建的项目,会为所有作为async chunk生成的文件(通过 import() 按需 code splitting 的产物), 自动生成prefetch
+
 ## CSS代码分割
 
 ### chunkFileName
@@ -558,7 +564,7 @@ module.exports = {
 
 ## 浏览器缓存
 
-添加Hash值
+### 添加Hash值
 
 ```js
 module.exports = {
@@ -571,7 +577,7 @@ module.exports = {
 
 只有修改了这个hash值才会发生改变,
 
-
+### mainifest 介绍
 
 注意在老版本中可能你没有修改但是每次打包生成的hash值会不一样,那是因为, 你每次打包生成的`mainifest`可能不一样, `mainifest`记录的是每次打包各个包之间的依赖关系,可能每次打包发生了一些变化,`manifest`可能记录在各个包中间,
 
@@ -600,3 +606,57 @@ module.exports = {
 ### Simming预置全局变量
 
 [官网](https://webpack.docschina.org/guides/shimming/#shimming-globals)
+
+
+
+# 实战
+
+## Library 打包
+
+### 打包输出
+
+打包非业务代码的时候,考虑到要给其他人使用,需要对打包输出格式进行配置
+
+```js
+const path = require('path')
+module.exports = {
+  model: 'production',
+  entry: './src/index.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'library.js',
+    library: 'root', // 注释1
+    libraryTarget: 'umd' // 注释2
+  }
+}
+```
+
+**注释1 : ** 当通过`<script>`方式引入的时候,在全局添加一个`root`变量, 可以通过`root.fn`来调用打包方法
+
+**注释2 : ** 打包的格式支持`ESModule` `Common.js`的引入
+
+
+
+### 内部依赖
+
+当我们内部引入了第三方库的时候, 我们不要把第三方库打包进来, 防止用户的代码中也引入了这个库,我们再打包进来就会让用户引入两次这个库
+
+```js
+const path = require('path')
+module.exports = {
+  model: 'production',
+  entry: './src/index.js',
+  externals: ['lodash'],
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'library.js',
+    library: 'root', // 注释1
+    libraryTarget: 'umd' // 注释2
+  }
+}
+```
+
+配置完成后, 需要在业务代码中引入我们依赖的库
+
+`externals`的配置的可以数组 可以是 对象
+
