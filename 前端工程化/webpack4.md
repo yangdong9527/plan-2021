@@ -613,6 +613,8 @@ module.exports = {
 
 ## Library 打包
 
+[官网Library](https://webpack.docschina.org/guides/author-libraries/)
+
 ### 打包输出
 
 打包非业务代码的时候,考虑到要给其他人使用,需要对打包输出格式进行配置
@@ -658,5 +660,41 @@ module.exports = {
 
 配置完成后, 需要在业务代码中引入我们依赖的库
 
-`externals`的配置的可以数组 可以是 对象
+`externals`的配置的可以数组 可以是 对象, 这里表示的是我们不把`lodash`打包到项目中去, 除此之外它的配置也规定了在业务代码中引入这个库的名字
+
+
+
+## PWA 了解
+
+**PWA**可以将你的的项目缓存到浏览器中,当你的服务器挂掉了,用户还是可以访问
+
+有兴趣可以了解下`PWA的原理` 好像是使用了serviceWorker
+
+简单的实现和配置
+
+```js
+const WorkboxPlugin = require('workbox-webpack-plugin')
+
+module.exports = {
+    plugins: [
+        new WorkboxPlugin.gennerateSW({
+            clientsClaim: true,
+            skipWaiting: true
+        })
+    ]
+}
+```
+
+配置完成后会生成一个`service-worker.js`文件,然后在业务代码中添加
+
+```js
+if ('serviceWorker' in navigator) {
+    naviagtor.serviceWorker.register('/service-worker.js)
+    	.then(registration => {
+        	console.log('success')
+    	}).catch(err => {
+        	console.log('err')
+    	})
+}
+```
 
