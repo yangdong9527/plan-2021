@@ -43,3 +43,16 @@ export NVM_DIR="/root/.nvm"
 source .bash_profile
 ```
 
+
+
+## 常用命令
+
+[速查网](https://www.linuxcool.com/)
+
+```shell
+# 压缩解压
+tar -cvfg html.tar.gz *
+tar -xvfg html.tar.gz -C /www
+
+```
+

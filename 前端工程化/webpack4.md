@@ -372,6 +372,12 @@ sideEffects: ['*.css']
 
 
 
+### vue3 Tree Shaking 思考
+
+在Vue2中,全局的API都是绑定在实例上的, 而 Vue3 将他们独立分块出来, 就可以满足 Tree Shaking了
+
+
+
 ## Model 环境
 
 
@@ -695,6 +701,44 @@ if ('serviceWorker' in navigator) {
     	}).catch(err => {
         	console.log('err')
     	})
+}
+```
+
+
+
+
+
+# 补充扩展
+
+
+
+## style-resources-loader
+
+### 安装
+
+```shell
+npm i style-resources-loader vue-cli-plugin-style-resources-loader -D
+
+# 或者
+
+vue add style-resources-loader
+```
+
+
+
+### 配置
+
+```js
+// vue.config.js
+module.exports = {
+    pluginOptions: {
+    'style-resources-loader': {
+          preProcessor: 'scss',
+          patterns: [
+              path.resolve(__dirname, './src/style/variable.scss')
+          ]
+        }
+      }
 }
 ```
 
