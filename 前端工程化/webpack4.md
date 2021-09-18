@@ -706,13 +706,49 @@ if ('serviceWorker' in navigator) {
 
 
 
+## 性能优化
+
+如何提升打包速度
+
++ 更新本地包版本
++ 尽可能减少Loader覆盖范围
++ plugin尽可能精简并确保可靠
++ resolve参数的合理配置
+
+```js
+module.exports = {
+    resolve: {
+        extensions: ['.js', '.vue'], //知道那个查找文件后缀
+        mainFiles: ['index'], // 自动查找文件夹下的 文件
+        alias: {
+            '@': path.resolve(__dirname, './src')
+        }
+    }
+}
+```
+
++ 使用DellPlugin提高打包速度
+
+单独将所有的第三方库以库的方式单独打包并且使用`DellPlugin`生成打包后文件和源码的manifest文件, 配置通过`AddAssetHtmlWebpackPlugin`将打包后的文件引入到html中,再配置`DllReferencePlugin`插件通过生成的`manifest`文件, 在打包的时候不重新打包第三方库而是直接使用
+
++ 控制包文件大小(tree shaking)
++ 合理使用shourceMap
+
+
+
+# 问句
+
+## HMR原理?
+
+## webpack工作原理?
+
 
 
 # 补充扩展
 
 
 
-## style-resources-loader
+## style-resources-loader使用
 
 ### 安装
 
