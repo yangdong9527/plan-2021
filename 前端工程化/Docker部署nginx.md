@@ -84,6 +84,12 @@ server {
              rewrite ^/api/?(.*) /$1 break;
              proxy_pass http://47.103.120.125:7001;
         }
+  			# 需要配置 config 文件中的 publicPath
+        location /abc {
+						alias /opt/def/;
+    				try_files $uri $uri/ /abc/index.html;
+    				index index.html index.html;
+        }
 }
 
 # 重定向
