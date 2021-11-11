@@ -1,0 +1,1 @@
+![](C:\Users\Y_D\Desktop\plan-2021\assets\Snipaste_2021-10-12_11-36-45.png)

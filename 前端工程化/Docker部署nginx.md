@@ -112,6 +112,76 @@ docker run -d -p 80:80 -v /www/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /w
 
 
 
+其他配置
+
+```nginx
+# 502 bad gateway 错误解决配置 start
+proxy_buffer_size 64k;
+proxy_buffers 32 32k;
+proxy_busy_buffers_size 128k;
+# 502 bad gateway 错误解决配置 end
+
+server {
+
+    listen 80;
+    server_name yabei.520ban.com;
+
+    client_max_body_size     200m; #文件最大大小
+    proxy_connect_timeout    600;  #设置超时时间
+    proxy_read_timeout       600;
+    proxy_send_timeout       600;
+
+
+    location ^~/doctor/yb/ {
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Real-PORT $remote_port;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            proxy_pass http://127.0.0.1:9048/;
+            error_page 405 =200 http://$host$request_uri;
+    }
+
+    location ^~/platform/yb/ {
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Real-PORT $remote_port;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            proxy_pass http://127.0.0.1:9048/;
+            error_page 405 =200 http://$host$request_uri;
+    }
+
+
+
+    location /platform {
+            alias /usr/local/yabei/web/platform/;         #静态资源路径
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html =404;
+    }
+ 
+
+    location /doctor {
+            alias /usr/local/yabei/web/doctor/;         #静态资源路径
+            index  index.html index.htm;
+            try_files $uri $uri/ /index.html =404;
+    }
+
+
+    location / {
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Real-PORT $remote_port;
+            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            proxy_pass http://127.0.0.1:9048;
+            error_page 405 =200 http://$host$request_uri;
+     }
+}
+```
+
+
+
 ### rewrite语法说明
 
 基础语法
