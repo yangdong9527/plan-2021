@@ -15,24 +15,21 @@ npm i dat.gui -S
 ```js
 import * as dat from 'dat.gui'
 
-const gui = new dat({ closed: true })
-
-//debug
-// 调整数值
-gui.add(mesh.position, 'y', -3, 3, 0.01).name('geometry y')
-// 调整布尔值
-gui.add(material, 'wireframe')
-// 控制颜色
-const parameters = {
-    color: 0xff0000，
-    spin: () => {
-        gasp.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + 10 })
-    }
+const params = {
+  color: 0xff0000,
+  spin: () => {
+    gsap.to(mesh.rotation, { y: mesh.rotation.y + 10 })
+  }
 }
-gui.addColor(parameters, 'color').onChange(() => {
-    material.color.set(parameters.color)
-})
-// 按钮点击事件
+const gui = new dat.GUI({ closed: true })
 
+const gui = new dat.GUI({ closed: true })
+gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('mesh.y')
+gui.add(mesh, 'visible')
+gui.add(material, 'wireframe')
+gui.addColor(params, 'color').onChange(() => {
+  material.color.set(params.color)
+})
+gui.add(params, 'spin')
 ```
 
