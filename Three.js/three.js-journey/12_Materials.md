@@ -1,79 +1,3 @@
-### material 属性
-
-```js
-const material = new THREE.MeshBasicMaterial()
-
-meterial.map = doorColorTexture
-material.color = new THREE.Color('red')
-material.wireframe = trhe
-
-// 如果要使用到 透明度 都要设置 transparent
-material.transparent = true
-material.opacity = 0.5
-material.alphaMap = doorAlphaTexture
-
-//设置平面那面渲染
-material.size = THREE.FrontSide
-// THREE.FrontSide  default
-// THREE.BackSide
-// THREE.DoubleSide
-
-```
-
-### MeshNormalMaterial 网格法向量材质
-
-
-
-### MeshMatcapMaterial
-
-自动生成图片的材质
-
-
-
-### MeshDepthMaterial 网格深度材质
-
-
-
-### MeshLamberMaterial
-
-
-
-### MeshPhongMaterial
-
-
-
-### MeshToonMaterial
-
-
-
-### MeshStandarMaterial
-
-
-
-### aoMap
-
-设置材质突起的产生的阴影的感觉
-
-
-
-### displacementMap
-
-可以控制几何体纹理的 突起 凹陷
-
-
-
-
-
-### 环境贴图
-
-给物体添加周围环境贴图
-
-
-
-如何获取环境 贴图
-
-
-
 ### 准备工作
 
 #### 创建3个集合体
@@ -250,4 +174,133 @@ material.shininess = 100  // 光泽度
 material.speculat = new THREE.Color(px1188ff)  // 设置 反光的颜色
 
 ```
+
+### MeshToonMaterial
+
+可使用该卡通材质 实现渐变效果
+
+```js
+const material = new THREE.MeshToonMaterial()
+
+matterial.gradientMap = gradentTexture
+```
+
+注意 对于较小的纹理 图片, three.js 会进行拉伸模糊 来处理 记得添加以下处理
+
+```js
+gradientTexture.minFilter = THREE.NearestFilter
+gradientTexture.magFilter = THREE.NearestFilter
+gradientTexture.generateMipmaps = false // 为了性能关闭
+```
+
+
+
+### MeshStandardMaterial
+
+一个支持光 , 并且支持 `roughness 和 metalness`  粗糙光泽 和 金属
+
+```js
+const material = new THREE.MeshStandardMaterial()
+material.metalness = 0.45
+material.roughness = 0.45
+
+// 添加一个纹理
+material.map = doorClorTexture
+```
+
+#### 添加一个 阴影效果
+
+```js
+// 要想添加 阴影效果 , 需要额外 提供一组 UV 数据给几何体 来对于 阴影材质渲染的 UV坐标
+const plane = new THREE.Mesh(
+	new THREE.PlaneBufferGeometry(1,1),
+    material
+)
+plane.geometry.setAttribute(
+	'uv2',
+    new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2)
+)
+
+// 然后添加 纹理
+material.aoMap = doorAmbientOcclusionTexture
+material.aoMapIntensity = 10 // aoMap 强度
+```
+
+
+
+#### displacementMap
+
+可以用来实现一种  `突出` 来的感觉,  纹理 看上去 真实,  
+
+当你添加了 `这种效果没有展示出来 可能是你的 几何体 没有足够的顶点来支持 `
+
+这种材质的 特点 height.png 为例,  白色 会 上升 黑色 下降, 当处于 灰色  则不动
+
+```js
+material.displacementMap = doorHeightTexture
+material.displacementScale  = 0.05 // 位移强度
+//  添加顶点
+new THREE.PlaneBufferGeometry(1,1,100,100)
+
+```
+
+#### 金属 和 粗糙/光泽 效果
+
+```js
+material.metalnessMap = doorMetalnessTexture // 金属效果
+material.roughnessMap = doorToughnessTexture  // 粗糙 光泽 就是是否反光的效果
+
+// 这两个 不要一起使用 下面的会影响 贴图中的效果 或者设置成 0 和 1
+material.metalness = 0
+material.roughness = 1
+```
+
+
+
+#### normalMap
+
+这个贴图可以 给物体添加 很多细节点 , 比如 门上 雕刻的花纹 凹槽 这种都可以展示出来
+
+```js
+material.normalMap = doorNormalTexture
+material.normalScale.set(0.5, 0.5) // 细节 强度
+```
+
+#### alphaMap
+
+可以控制显示和隐藏
+
+```js
+material.transparent = true
+material.alphaMap = doorAlphaTexture
+```
+
+
+
+### MeshPhysicalMaterial
+
+它可 MeshStandardMaterial 一样, 但是 会在外部添加一层 透明的薄膜的效果
+
+
+
+### 实现 环境贴图
+
+```js
+const material = new THREE.MeshStandardMaterial()
+material.metalness = 0.7
+material.roughness = 0.2
+
+// 加载环境贴图
+const cubeTextureLoader = new THREE.CubeTextureLoader()
+
+const environmentMapTexture = cubeTextureLoader.load([
+    // 六张图片 顺序  +x -x +y -y  +z -z
+])
+
+material.envMap = environmentMapTexture
+
+// 可通过 调整 金属 和 粗糙程度 来控制 清楚与否
+```
+
+HDRIHaven  可以获取环境贴图
 
