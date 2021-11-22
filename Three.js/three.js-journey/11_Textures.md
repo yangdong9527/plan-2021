@@ -60,6 +60,10 @@ colorTexture.center.x = 0.5
 colorTexture.center.y = 0.5
 ```
 
+#### repeat
+
+默认值为 1,1  表示, 一整个页面 直接渲染,   当设置为 4,4 , 表示 将页面 x 分成 4 份 y 轴分成4 份, 然后 最小的一个页面进行渲染
+
 ### minFilter
 
 当物体像素小于纹理像素, 边界会被模糊 , 使用这个 可以看的更清楚
