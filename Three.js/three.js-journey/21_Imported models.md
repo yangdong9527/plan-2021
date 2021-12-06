@@ -64,7 +64,6 @@ let mixer = null
 
 gltfLoader.load('/models/Fox/glTF-Binary/Fox.glb',
   (gltf) => {
-    console.log(gltf)
     mixer = new THREE.AnimationMixer(gltf.scene) // 生成动画控制器
     const action = mixer.clipAction(gltf.animations[2]) // 加载动画
     action.play()

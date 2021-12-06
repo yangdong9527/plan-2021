@@ -5,7 +5,7 @@
 ```js
 const particlesGeometry = new THREE.SphereBufferGeometry(1,32,32)
 
-const particlesMaterial = new THREE.PointsMaterial()
+const particlesMaterial = new THREE.PointsMaterial() 
 particlesMaterial.size = 0.02 // 设置顶点 大小
 particlesMaterial.sizeAttenuation = true // 会随着相机的远近大小不一样
 
@@ -58,7 +58,7 @@ particlesMaterial.depthTest = false
 
 如果有其他的几何体或者有其他的颜色 都会出问题
 
-#### depthWrite
+#### depthWrite 修复
 
 ```js
 particlesMaterial.depthWrite = false
