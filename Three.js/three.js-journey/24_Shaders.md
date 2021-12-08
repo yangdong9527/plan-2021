@@ -75,7 +75,7 @@ three.js 提供了两种  **着色器材质: **  `RawShaderMaterial` 和 `Shader
 
 #### 着色器的分类和常量
 
-提供了两种着色器, 一种是`顶点着色器(vertexShader)` 一种是 `片元着色器(fragmentShader)`
+提供了两种着色器, 一种是`顶点着色器(vertexShader)` 一种是 `片元着色器(fragmentShader)`, 分别用来控制当前像素点位置坐标, 和当前像素点的渲染方式
 
 在着色器之间流窜这三个常量: `uniform , attribute, varying`
 
@@ -83,9 +83,110 @@ three.js 提供了两种  **着色器材质: **  `RawShaderMaterial` 和 `Shader
 + `attribute`是只能在`顶点着色器`中访问到, 它获取的是几何体中的`attributes`属性中的值
 + `varying`是`顶点着色器`中定义的值, 可以在`片元着色器`中进行接收
 
+#### 代码
+
+创建一个着色器材质
+
+```js
+const material = new THREE.RawShaderMaterial({
+  vertexShader: testVertexShader,
+  fragmentShader: testFragmentShader
+})
+```
+
+提供`vertexShader 和 fragmentShader`, 两者都需要使用 GLSL 语法进行书写
+
+```glsl
+// testVertexShader
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+attribute vec3 position;
+
+void main()
+{
+  vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+  vec4 viewPosition = viewMatrix * modelPosition;
+  vec4 projectedPosition = projectionMatrix * viewPosition;
+  
+  gl_Position = projectedPosition;
+}
+```
+
+```glsl
+// testFragmentShader
+precision mediump float;
+
+void main()
+{
+  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+```
+
+参数的传递
+
+```js
+// 通过 uniforms 可以传递到全局
+const material = new THREE.RawMaterial({
+  ...
+  uniforms: {
+    uTime: { value: 0 }
+  }
+})
+
+// testVertexShader 中
+uniform float uTime;
+
+void main () {
+  ...
+  modelPosition.z += sin(modelPosition.x * 10.0 - uTime)
+}
+```
+
+渲染纹理
+
+加载纹理
+
+```js
+const textureLoader = new THREE.TextureLoader();
+const flagTexture = textureLoader.load('/textures/flag-china.jpg')
+const material = new THREE.RawShaderMaterial({
+  uniforms: {
+    uTexture: {
+      value: flagTexture
+    }
+  }
+})
+```
+
+传递UV
+
+```glsl
+// testVertexShader
+attribute vec2 uv;
+
+varying vec2 vUv; // 传递给 fragment
+void main()
+{
+  vUv = uv;
+}
+```
+
+渲染
+
+```glsl
+uniform sampler2D uTexture;
+varying vec2 vUv;
+
+void main()
+{
+  vec4 textureColor = texture2D(uTexture, vUv);
+  gl_FragColor = textureColor;
+}
+```
 
 
 
-
-
+`ShaderMaterial`和`RawShaderMaterial`的区别就是 不用写 `attribute 和 uniform`来接收一些值
 
