@@ -200,6 +200,10 @@ class Promise {
 + 拿到 x.then , 如果 x.then 是一个函数 , 则通过 call 方法调用, 第一个参数是this, 后面的是 成功的回调和失败的回调
 + 成功失败的回调只能调用一次 , 所以设定一个 called 来防止多次调用
 
+这个地方主要处理的就是 promise2 的返回值问题, promise2的返回值是then函数的 成功或者失败回调的返回值,  当返回 特殊处理了返回值 为一个 promise 或者 是一个 带 then函数的对象
+
+`resolvePromise`函数的调用是浏览器内核 的异步调用 可用`setTimeout`模拟
+
 ```js
 function resolvePromise(promsie2,x,resolve,reject) {
   if(x === promise2) {
